@@ -9,4 +9,9 @@ document.close();
 
 with open("file.txt", "x") as file:
     file.write("Hello, World!")
-    
+
+with open("file.txt", "w") as file:
+    file.write("How are you?")
+
+with open("file.txt", "a") as file:
+    file.write("\nI am fine.")
