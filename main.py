@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pandas as pd
 from flask import Flask, jsonify
 
@@ -30,6 +32,34 @@ def analyser_produits():
             "prix_min": float(stats["min"]),
             "prix_max": float(stats["max"]),
             "apercu_colonnes": list(df.columns),
+        }
+    ), 200
+
+
+@app.route("/api/v1/stats/produits/locaux", methods=["GET"])
+def analyser_produits_locaux():
+
+    # 1. Localiser le fichier JSON
+    chemin = Path(__file__).resolve().parent / "data_local.json"
+
+    # 2. Lire les données locales avec Pandas
+    df = pd.read_json(chemin)
+
+    # 3. Extraire la Series des prix
+    series_prix = df["prix"]
+
+    # 4. Calculer les statistiques
+    stats = series_prix.describe().to_dict()
+
+    # 5. Retourner les produits et les statistiques
+    return jsonify(
+        {
+            "source": "data_local.json",
+            "total_produits": int(stats["count"]),
+            "prix_moyen": round(float(stats["mean"]), 2),
+            "prix_min": float(stats["min"]),
+            "prix_max": float(stats["max"]),
+            "produits": df.to_dict(orient="records"),
         }
     ), 200
 
